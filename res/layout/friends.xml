@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textViewFriendsATCOnline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/headingFriendsOnlineATC"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TableLayout
+            android:id="@+id/tableLayoutFriendsOnlineAtc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/textViewFriendsPilotsOnline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/headingFriendsOnlinePilots"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TableLayout
+            android:id="@+id/tableLayoutFriendsOnlinePilots"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/textViewFriendsATCBookings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/headingFriendsBookingsATC"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TableLayout
+            android:id="@+id/tableLayoutFriendsBookedAtc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </TableLayout>
+    </LinearLayout>
+
+</ScrollView>
