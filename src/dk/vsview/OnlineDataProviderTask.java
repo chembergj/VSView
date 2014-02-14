@@ -17,7 +17,7 @@ import org.joda.time.format.DateTimeFormatter;
 import dk.vsview.domain.OnlineClient;
 import dk.vsview.domain.OnlineClient.ClientType;
 import dk.vsview.domain.OnlineData;
-
+import dk.vsview.domain.ServerData;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -28,14 +28,19 @@ public class OnlineDataProviderTask extends
 	IOnlineDataConsumer onlineDataConsumer;
 	private static OnlineData cachedOnlineData = new OnlineData();
 
-	// final String onlineDataUrl = "http://info.vroute.net/vatsim-data.txt";
-	final String onlineDataUrl = "http://www.net-flyer.net/DataFeed/vatsim-data.txt";
+	final String onlineDataUrl = "http://info.vroute.net/vatsim-data.txt";
+	//final String onlineDataUrl = "http://www.net-flyer.net/DataFeed/vatsim-data.txt";
 	int mode;
-
+	ServerData serverData;
+	
 	public OnlineDataProviderTask(IOnlineDataConsumer onlineDataConsumer) {
 		this.onlineDataConsumer = onlineDataConsumer;
 	}
 
+	public void setServerData(ServerData serverData) {
+		this.serverData = serverData;
+	}
+	
 	@Override
 	protected OnlineData doInBackground(Integer... params) {
 
@@ -45,7 +50,7 @@ public class OnlineDataProviderTask extends
 			mode = params[0];
 
 			AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
-			HttpGet getRequest = new HttpGet(onlineDataUrl);
+			HttpGet getRequest = new HttpGet(serverData.getRandomCompleteDataFileURLs());
 
 			try {
 				HttpResponse response = client.execute(getRequest);

@@ -6,6 +6,7 @@ import dk.vsview.domain.Booking;
 import dk.vsview.domain.BookingData;
 import dk.vsview.domain.OnlineClient;
 import dk.vsview.domain.OnlineData;
+import dk.vsview.domain.ServerData;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -21,7 +22,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-public class TabATCFragment extends Fragment  implements IOnlineDataConsumer, IBookingDataConsumer {
+public class TabATCFragment extends Fragment  implements IOnlineDataConsumer, IBookingDataConsumer, IServerDataConsumer {
 
 	private final class ATCLoadCancelListener implements OnCancelListener {
 		private final BookedDataProviderTask bookedDataTask;
@@ -45,7 +46,9 @@ public class TabATCFragment extends Fragment  implements IOnlineDataConsumer, IB
 	ProgressDialog progressDialog;
 	OnlineDataProviderTask onlineDataTask;
 	BookedDataProviderTask bookedDataTask;
-
+	ServerDataProviderTask serverdataProviderTask;
+	ServerData serverData;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -62,19 +65,26 @@ public class TabATCFragment extends Fragment  implements IOnlineDataConsumer, IB
 	public void loadATCData() {
 		loadATCData(getView());
 	}
-
+	
 	private void loadATCData(View view) {
-
-		onlineDataTask = new OnlineDataProviderTask(this);
+		startLoadOfBookingsAndServerData(view);
+		setupTableLayouts(view);
+	}
+	
+	private void startLoadOfBookingsAndServerData(View view) {
 		bookedDataTask = new BookedDataProviderTask(this);
+		serverdataProviderTask = new ServerDataProviderTask(this);
+		onlineDataTask = new OnlineDataProviderTask(this);
 		
+		serverdataProviderTask.execute();
+		bookedDataTask.execute();		
+	}
+
+	private void setupTableLayouts(View view) {
 		tableLayoutOnlineAtc = (TableLayout) view
 				.findViewById(R.id.tableLayoutOnlineAtc);
 		tableLayoutBookedAtc = (TableLayout) view
 				.findViewById(R.id.tableLayoutBookedAtc);
-
-		onlineDataTask.execute(0);
-		bookedDataTask.execute();
 
 		progressDialog = new ProgressDialog(view.getContext());
 		progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -84,6 +94,28 @@ public class TabATCFragment extends Fragment  implements IOnlineDataConsumer, IB
 		progressDialog.show();
 	}
 
+	/* 
+	 * Called when serverdata has been fetched
+	 * Triggers the reading of onlineData
+	 * @see dk.vsview.IServerDataConsumer#dataFetched(dk.vsview.domain.ServerData)
+	 */
+	@Override
+	public void dataFetched(ServerData serverData) {
+		onlineDataTask.setServerData(serverData);
+		onlineDataTask.execute(0);
+	}
+
+	@Override
+	public void dataFetched(BookingData data) {
+		showBookedATCs(data);
+	}
+
+	@Override
+	public void dataFetched(OnlineData data) {
+		showOnlineATCs(data);
+	}
+
+	
 	/**
 	 * Called when OnlineDataProviderTask has read online clients
 	 * 
@@ -181,13 +213,4 @@ public class TabATCFragment extends Fragment  implements IOnlineDataConsumer, IB
 			progressDialog.cancel();
 	}
 
-	@Override
-	public void dataFetched(BookingData data) {
-		showBookedATCs(data);
-	}
-
-	@Override
-	public void dataFetched(OnlineData data) {
-		showOnlineATCs(data);
-	}
 }

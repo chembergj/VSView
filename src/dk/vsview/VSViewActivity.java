@@ -1,5 +1,6 @@
 package dk.vsview;
 
+import dk.vsview.domain.ServerData;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.Activity;
@@ -13,7 +14,8 @@ public class VSViewActivity extends Activity {
 
 	private final String tagATCFragment = "tagATC";
 	private final String tagFriendsFragment = "tagFriends";
-
+	private ServerDataProviderTask dataProviderTask;
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -21,7 +23,7 @@ public class VSViewActivity extends Activity {
 		setContentView(R.layout.main);
 
 		getResources();
-
+		
 		ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
@@ -41,7 +43,6 @@ public class VSViewActivity extends Activity {
 
 		tabFriends.setTabListener(tabListenerFriends);
 		actionBar.addTab(tabFriends);
-		
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -59,5 +60,4 @@ public class VSViewActivity extends Activity {
 				.findFragmentByTag(tagATCFragment);
 		atcFragment.loadATCData();
 	}
-
 }

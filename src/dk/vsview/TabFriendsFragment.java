@@ -9,6 +9,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.DialogInterface.OnDismissListener;
 import android.graphics.Typeface;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
@@ -22,10 +23,11 @@ import dk.vsview.domain.Booking;
 import dk.vsview.domain.BookingData;
 import dk.vsview.domain.OnlineClient;
 import dk.vsview.domain.OnlineData;
+import dk.vsview.domain.ServerData;
 
 public class TabFriendsFragment extends Fragment implements IOnlineDataConsumer, IBookingDataConsumer {
 
-	private final class ATCLoadCancelListener implements OnCancelListener {
+	private final class ATCLoadCancelListener implements OnCancelListener, OnDismissListener {
 		private final BookedDataProviderTask bookedDataTask;
 		private final OnlineDataProviderTask onlineDataTask;
 
@@ -40,6 +42,12 @@ public class TabFriendsFragment extends Fragment implements IOnlineDataConsumer,
 			onlineDataTask.cancel(true);
 			bookedDataTask.cancel(true);
 		}
+
+		@Override
+		public void onDismiss(DialogInterface dialog) {
+			onlineDataTask.cancel(true);
+			bookedDataTask.cancel(true);
+		}
 	}
 
 	TableLayout tableLayoutOnlineAtc;
@@ -48,6 +56,8 @@ public class TabFriendsFragment extends Fragment implements IOnlineDataConsumer,
 	ProgressDialog progressDialog;
 	OnlineDataProviderTask onlineDataTask;
 	BookedDataProviderTask bookedDataTask;
+	ServerData serverData;
+	
 	private final int[] friendCIDs = { 832365, 848603, 857075, 861112, 862571, 869132,
 			879396, 880543, 881843, 931070, 936927, 968376, 989939, 1002035, 1003540,
 			1008925, 1010196, 1012739, 1020902, 1060884, 1062157, 1077756, 1080430, 1107796,
@@ -71,6 +81,11 @@ public class TabFriendsFragment extends Fragment implements IOnlineDataConsumer,
 		loadATCData(getView());
 	}
 
+	public void setServerData(ServerData serverData) {
+		this.serverData = serverData;
+	}
+	
+	
 	private void loadATCData(View view) {
 
 		onlineDataTask = new OnlineDataProviderTask(this);
@@ -91,6 +106,7 @@ public class TabFriendsFragment extends Fragment implements IOnlineDataConsumer,
 		progressDialog.setMessage("Loading online activity and bookings...");
 		progressDialog.setCancelable(true);
 		progressDialog.setOnCancelListener(new ATCLoadCancelListener(bookedDataTask, onlineDataTask));
+		progressDialog.setOnDismissListener(new ATCLoadCancelListener(bookedDataTask, onlineDataTask));
 		progressDialog.show();
 	}
 
